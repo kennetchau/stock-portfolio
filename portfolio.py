@@ -23,19 +23,19 @@ class Port:
 
 	# A function to create an empty dataframe to store the portfolio, can import portfolio through csv 
 	def open_port(self,name):
-		#try:
-		self.port = pd.read_csv(name,index_col=0)
-		Port.update_all(self)
-		Port.show_port(self)
-		#except:
-		#	self.port = pd.DataFrame(columns = ['Market Price','Currency','Type','Book Cost','Average Cost','Quantity','Market Value'])
-		#	cash_us = input('How many USD you have?\n')
-		#	cash_ca = input('How many CAD you have?\n')
-		#	if float(cash_us) != 0:
-		#		Port.contri(self,'CASH-US','USD',cash_us)
-		#	if float(cash_ca) != 0:
-		#		Port.contri(self,'CASH-CA','CAD',cash_ca)
-		#	Port.show_port(self)
+		try:
+			self.port = pd.read_csv(name,index_col=0)
+			Port.update_all(self)
+			Port.show_port(self)
+		except:
+			self.port = pd.DataFrame(columns = ['Market Price','Currency','Type','Book Cost','Average Cost','Quantity','Market Value'])
+			cash_us = input('How many USD you have?\n')
+			cash_ca = input('How many CAD you have?\n')
+			if float(cash_us) != 0:
+				Port.contri(self,'CASH-US','USD',cash_us)
+			if float(cash_ca) != 0:
+				Port.contri(self,'CASH-CA','CAD',cash_ca)
+			Port.show_port(self)
 	
 	# Using the symbol as a key, check if the investment exist, if it do, update quantity, cost and average price. If the investment doesn't exist add a new entry to the dataframe
 	def buy(self, symbol, currency, type ,cost, quantity):
@@ -146,7 +146,7 @@ class Port:
 	# A function that update all market price and market value 
 	def update_all(self):
 		for item in self.port.index:
-			if not item == 'CASH-US' or not item == 'CASH-CA':
+			if not (item == 'CASH-US' or item == 'CASH-CA'):
 				marketp = Port.market_price(self,item)
 				quantity = self.port.loc[item]['Quantity']
 				marketv = Port.market_value(self,marketp,quantity)
