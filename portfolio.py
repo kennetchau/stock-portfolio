@@ -28,7 +28,7 @@ class Port:
 			Port.update_all(self)
 			Port.show_port(self)
 		except:
-			self.port = pd.DataFrame(columns = ['Market Price','Currency','Type','Book Cost','Average Cost','Quantity','Market Value'])
+			self.port = pd.DataFrame(columns = ['Market Price','Currency','Type','Book Cost','Average Cost','Quantity','Market Value','Unrealized gain or loss'])
 			cash_us = input('How many USD you have?\n')
 			cash_ca = input('How many CAD you have?\n')
 			if float(cash_us) != 0:
@@ -49,13 +49,13 @@ class Port:
 			Now_quant = int(Current_records['Quantity']) + int(quantity)
 			marketv = Port.market_value(self,marketp,Now_quant)
 			average = cal_avg(Now_book,Now_quant)
-			self.port.loc[symbol]=[marketp,currency,type,Now_book,average,Now_quant,marketv]
+			self.port.loc[symbol]=[marketp,currency,type,Now_book,average,Now_quant,marketv,marketv-Now_book]
 			print('\nInvestment successfully added\n')
 			print(self.port.loc[symbol])
 		except KeyError:
 			average = cal_avg(cost,quantity)
 			marketv = Port.market_value(self,marketp,int(quantity))
-			self.port.loc[symbol]=[marketp,currency,type,cost,average,quantity,marketv]
+			self.port.loc[symbol]=[marketp,currency,type,cost,average,quantity,marketv,marketv-float(cost)]
 			print('\nInvestment successfully added\n')
 			print(self.port.loc[symbol])
 		# Deduct the amount of cash from the purchase
@@ -82,6 +82,7 @@ class Port:
 				self.port.loc[symbol,'Quantity']=New_quantity[0]
 				self.port.loc[symbol,'Book Cost']=New_book[0]
 				self.port.loc[symbol,'Market Value']= New_marketv
+				self.port.loc[symbol,'Unrealized gain or loss']=New_marketv - New_book[0]
 				print('\nInvestment successfully removed\n')
 				print(self.port.loc[symbol])
 			else:
@@ -97,7 +98,7 @@ class Port:
 			amount = float(amount)
 			Current_records = self.port.loc[[symbol]]
 			Now_book = float(Current_records['Book Cost']) + float(amount)
-			self.port.loc[symbol]=[Now_book,currency,'CASH',Now_book,Now_book,1,Now_book]
+			self.port.loc[symbol]=[Now_book,currency,'CASH',Now_book,Now_book,1,Now_book,0]
 			if float(amount)>0:
 				print('\n${} added, your new balance\n'.format(amount))
 				print(self.port.loc[symbol])
@@ -106,7 +107,7 @@ class Port:
 				print(self.port.loc[symbol])
 		except KeyError:
 			amount = float(amount)
-			self.port.loc[symbol]=[amount,currency,'CASH',amount,amount,1,amount]
+			self.port.loc[symbol]=[amount,currency,'CASH',amount,amount,1,amount,0]
 			print('\n${} added\n'.format(amount))
 			print(self.port.loc[symbol])
 	
@@ -122,13 +123,13 @@ class Port:
 			Now_quant = int(Current_records['Quantity']) + int(quantity)
 			average = cal_avg(Now_book,Now_quant)
 			marketv = Port.market_value(self,marketp,Now_quant)
-			self.port.loc[symbol]=[marketp,currency,type,Now_book[0],average,Now_quant[0],marketv]
+			self.port.loc[symbol]=[marketp,currency,type,Now_book[0],average,Now_quant[0],marketv,marketv-Now_book[0]]
 			print('\nInvestment successfully added\n')
 			print(self.port.loc[symbol])
 		except KeyError:
 			average = cal_avg(cost,quantity)
 			marketv = Port.market_value(self,marketp,quantity)
-			self.port.loc[symbol]=[marketp,currency,type,cost,average,quantity,marketv]
+			self.port.loc[symbol]=[marketp,currency,type,cost,average,quantity,marketv,marketv-float(cost)]
 			print('\nInvestment successfully added\n')
 			print(self.port.loc[symbol])
 	
@@ -152,6 +153,7 @@ class Port:
 				marketv = Port.market_value(self,marketp,quantity)
 				self.port.loc[item,'Market Price']=marketp
 				self.port.loc[item, 'Market Value']=marketv
+				self.port.loc[item, 'Unrealized gain or loss']= marketv-self.port.loc[item]['Book Cost']
 				
 				
 	
@@ -186,7 +188,7 @@ def cal_avg(cost,quantity):
 		print("Please make sure quantity and cost are not string")
 
 
-# The main function, a text base UI that allow the user to execute the above functions.
+
 def main():
 	portfolio = Port()
 	path = "./portfolios"
