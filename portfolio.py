@@ -186,7 +186,7 @@ def cal_avg(cost,quantity):
 		print("Please make sure quantity and cost are not string")
 
 
-
+# Main function, using a text base UI
 def main():
 	portfolio = Port()
 	path = "./portfolios"
