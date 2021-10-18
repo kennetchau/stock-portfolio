@@ -1,5 +1,5 @@
 # stock-portfolio
-A stock portfolio build using python, allow the user to easy analyze his stock holdings and his portfolio values. 
+A stock portfolio builds using python allows the user to quickly analyze his stock holdings and review his portfolio values. 
 
 ## Built with:
 * Pandas
