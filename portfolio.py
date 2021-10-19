@@ -163,12 +163,32 @@ class Port:
 		print("$"+str(self.port['Market Value'].sum()))
 		print('*'*60)
 	
+	# Show total unrealized gain or loss
+	def total_unreal(self):
+		print('*'*60)
+		print("$"+str(self.port['Unrealized gain or loss'].sum()))
+		print('*'*60)	
+	
+	# A function to auto change your portfolio by reading your trading recorder
+	def auto_trade(self,name):
+		trade_record = pd.read_csv(name,index_col=0)
+		for item in trade_record.index:
+			print(trade_record.loc[item]['Action'])
+			if trade_record.loc[item]['Action'] == 'BUY':
+				Port.buy(self, trade_record.loc[item]['Company'], trade_record.loc[item]['Currency'], trade_record.loc[item]['Type'],trade_record.loc[item]['Amount'], trade_record.loc[item]['Quantity'])
+			elif trade_record.loc[item,'Action'] == 'SOLD' or trade_record.loc[item,'Action'] == 'SELL':
+				Port.sell(self,trade_record.loc[item]['Company'], trade_record.loc[item]['Quantity'], trade_record.loc[item]['Amount'])
+			elif trade_record.loc[item,'Action']=='CONTRI':
+				Port.contri(self,trade_record.loc[item]['Company'], trade_record.loc[item]['Currency'], trade_record.loc[item]['Amount'])
+			else:
+				print('Cannot identify action, make sure you use BUY, SOLD, SELL, CONTRI')
+		
 	# A function to show the current portfolio
 	def show_port(self):
 		print()
-		print('*'*100)
+		print('*'*120)
 		print(self.port)
-		print('*'*100)
+		print('*'*120)
 		print()
 
 	# A function to save the current portfolio
@@ -188,7 +208,7 @@ def cal_avg(cost,quantity):
 		print("Please make sure quantity and cost are not string")
 
 
-# Main function, a text base UI allow user to access function and their portfolio with simple commands.
+# Main function, a text base UI allow user to access their portfolio and perform action.
 def main():
 	portfolio = Port()
 	path = "./portfolios"
@@ -204,7 +224,7 @@ def main():
 	print(choice)
 	portfolio.open_port(choice)
 	while option != ':q':
-		option = input("Type b to buy an investment.\nType s to sell an investment.\nType c to contribute cash to your account,\nType t to transfer investment to your account.\nType m! to show the current market value of your portfolio. (Recommend updating your portfolio first.) \nType :u to update your portfolio to the latest prices.\nType :s to show your portfolio.\nType :q to quit and save your portfolio\n")
+		option = input("Type b to buy an investment.\nType s to sell an investment.\nType c to contribute cash to your account,\nType t to transfer investment to your account.\nType m! to show the current market value of your portfolio. (Recommend updating your portfolio first.) \nType u! to show the total unrealized gain or loss of your portfolio\nType :u to update your portfolio to the latest prices.\nType :a to update your portfolio using trading record\nType :s to show your portfolio.\nType :q to quit and save your portfolio\n")
 		option = option.lower()
 		if option == 'b':
 			symbol = input("Symbol: ")
@@ -232,8 +252,13 @@ def main():
 			portfolio.transfer(symbol.upper(),currency.upper(),type.upper(),float(cost),int(quantity))
 		if option == 'm!':
 			portfolio.total_marketv()
+		if option == 'u!':
+			portfolio.total_unreal()
 		if option == ':u':
 			portfolio.update_all()
+		if option == ':a':
+			recordname = input("\nPlease input the name of the record.\n")
+			portfolio.auto_trade(recordname)
 		if option == ':s':
 			portfolio.show_port()
 	portfolio.sav_port(choice)
