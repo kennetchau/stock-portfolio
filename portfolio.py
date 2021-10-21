@@ -21,9 +21,11 @@ class Port:
 	#initialize the portfolio
 	def __init__(self):
 		self.port = pd.DataFrame()
+		self.name = ''
 
 	# A function to create an empty dataframe to store the portfolio, can import portfolio through csv 
 	def open_port(self,name):
+		self.name = name
 		try:
 			self.port = pd.read_csv(name,index_col=0)
 			Port.update_all(self)
@@ -196,7 +198,7 @@ class Port:
 	# Show a bar chart of market value
 	def show_barm(self):
 		print()
-		ax = self.port.plot.barh(y='Market Value')
+		ax = self.port.plot.barh(y='Market Value', title=self.name)
 		plt.show()
 		print()
 
@@ -233,7 +235,7 @@ def main():
 	print(choice)
 	portfolio.open_port(choice)
 	while option != ':q':
-		option = input("Type b to buy an investment.\nType s to sell an investment.\nType c to contribute cash to your account,\nType t to transfer investment to your account.\nType m! to show the current market value of your portfolio. (Recommend updating your portfolio first.) \nType u! to show the total unrealized gain or loss of your portfolio\nType :u to update your portfolio to the latest prices.\nType :a to update your portfolio using trading record\nType :s to show your portfolio.\nType :g to show a bar chart representation of your portfolio market value\nType :q to quit and save your portfolio\n")
+		option = input("Type b to buy an investment.\nType s to sell an investment.\nType c to contribute cash to your account,\nType t to transfer investment to your account.\nType m! to show the current market value of your portfolio. (Recommend updating your portfolio first.) \nType u! to show the total unrealized gain or loss of your portfolio\nType :u to update your portfolio to the latest prices.\nType :a to update your portfolio using trading record\nType :s to show your portfolio.\nType :g to show a horizontal bar chart representation of your portfolio market value\nType :q to quit and save your portfolio\n")
 		option = option.lower()
 		if option == 'b':
 			symbol = input("Symbol: ")
