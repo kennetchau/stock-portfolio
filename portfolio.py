@@ -14,6 +14,7 @@
 import os
 import pandas as pd
 import yfinance as yf
+import matplotlib.pyplot as plt
 
 # portfolio class
 class Port:
@@ -154,6 +155,7 @@ class Port:
 				self.port.loc[item,'Market Price']=marketp
 				self.port.loc[item, 'Market Value']=marketv
 				self.port.loc[item, 'Unrealized gain or loss']= marketv-self.port.loc[item]['Book Cost']
+		self.port = self.port.sort_values(by='Market Value')
 				
 				
 	
@@ -190,6 +192,13 @@ class Port:
 		print(self.port)
 		print('*'*120)
 		print()
+	
+	# Show a bar chart of market value
+	def show_barm(self):
+		print()
+		ax = self.port.plot.barh(y='Market Value')
+		plt.show()
+		print()
 
 	# A function to save the current portfolio
 	def sav_port(self,name):
@@ -224,7 +233,7 @@ def main():
 	print(choice)
 	portfolio.open_port(choice)
 	while option != ':q':
-		option = input("Type b to buy an investment.\nType s to sell an investment.\nType c to contribute cash to your account,\nType t to transfer investment to your account.\nType m! to show the current market value of your portfolio. (Recommend updating your portfolio first.) \nType u! to show the total unrealized gain or loss of your portfolio\nType :u to update your portfolio to the latest prices.\nType :a to update your portfolio using trading record\nType :s to show your portfolio.\nType :q to quit and save your portfolio\n")
+		option = input("Type b to buy an investment.\nType s to sell an investment.\nType c to contribute cash to your account,\nType t to transfer investment to your account.\nType m! to show the current market value of your portfolio. (Recommend updating your portfolio first.) \nType u! to show the total unrealized gain or loss of your portfolio\nType :u to update your portfolio to the latest prices.\nType :a to update your portfolio using trading record\nType :s to show your portfolio.\nType :g to show a bar chart representation of your portfolio market value\nType :q to quit and save your portfolio\n")
 		option = option.lower()
 		if option == 'b':
 			symbol = input("Symbol: ")
@@ -261,6 +270,8 @@ def main():
 			portfolio.auto_trade(recordname)
 		if option == ':s':
 			portfolio.show_port()
+		if option == ':g':
+			portfolio.show_barm()
 	portfolio.sav_port(choice)
 		
 
