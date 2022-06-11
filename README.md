@@ -6,6 +6,8 @@ A stock portfolio builds using python allows the user to quickly analyze his sto
 * yfinance
 * matplotlib
 
+## How to use
+Download the needed package, and just add execute the python file
 
 Contact:
 
